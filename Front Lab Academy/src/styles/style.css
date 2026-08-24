@@ -1127,6 +1127,169 @@ pre {
   box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
 }
 
+.error-page {
+  min-height: calc(100vh - 220px);
+  display: grid;
+  gap: 1rem;
+}
+
+.error-hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: center;
+  min-height: 560px;
+  border: 1px solid var(--border);
+  border-radius: 1.2rem;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(34, 211, 238, 0.16), transparent 34%),
+    radial-gradient(circle at 8% 82%, rgba(123, 92, 255, 0.18), transparent 34%),
+    color-mix(in srgb, var(--surface-soft) 88%, var(--card) 12%);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1.2rem, 4vw, 3rem);
+}
+
+.error-copy {
+  max-width: 720px;
+}
+
+.error-copy > strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: clamp(5.4rem, 16vw, 12rem);
+  line-height: 0.88;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: transparent;
+  background: linear-gradient(135deg, var(--cyan), var(--blue), var(--purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.error-copy h1 {
+  margin: 0.45rem 0 0;
+  max-width: 680px;
+  color: var(--text-main);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.error-copy p {
+  margin: 1rem 0 0;
+  max-width: 620px;
+  color: var(--text-secondary);
+  font-size: 1.03rem;
+  line-height: 1.75;
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.error-primary-action {
+  border-color: var(--blue);
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: #ffffff;
+}
+
+.error-discord-action {
+  min-height: auto;
+  border-radius: 999px;
+  padding: 0.62rem 1rem;
+  font-size: 0.85rem;
+}
+
+.error-terminal {
+  border: 1px solid color-mix(in srgb, var(--cyan) 32%, var(--border));
+  border-radius: 1rem;
+  background: rgba(13, 17, 23, 0.94);
+  box-shadow: 0 22px 46px rgba(8, 10, 20, 0.26);
+  overflow: hidden;
+}
+
+.error-terminal-head {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  min-height: 2.25rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  padding: 0 0.85rem;
+}
+
+.error-terminal-head span {
+  width: 0.68rem;
+  height: 0.68rem;
+  border-radius: 999px;
+  background: var(--red);
+}
+
+.error-terminal-head span:nth-child(2) {
+  background: var(--yellow);
+}
+
+.error-terminal-head span:nth-child(3) {
+  background: var(--green);
+}
+
+.error-terminal pre {
+  margin: 0;
+  padding: 1.1rem;
+  white-space: pre-wrap;
+}
+
+.error-terminal code {
+  color: #d6defa;
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+
+.error-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.error-shortcuts a {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 132px;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--surface-card);
+  padding: 1rem;
+  text-decoration: none;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.error-shortcuts a:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-1px);
+}
+
+.error-shortcuts span {
+  color: var(--cyan);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.error-shortcuts strong {
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.error-shortcuts p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
 .search-input {
   width: min(100%, 360px);
   border: 1px solid var(--border-strong);
@@ -2484,6 +2647,15 @@ pre {
   .progress-track-grid {
     grid-template-columns: 1fr;
   }
+
+  .error-hero,
+  .error-shortcuts {
+    grid-template-columns: 1fr;
+  }
+
+  .error-hero {
+    min-height: auto;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1120px) {
@@ -2658,5 +2830,18 @@ pre {
   .module-pager .pill {
     width: 100%;
     min-width: 0;
+  }
+
+  .error-actions {
+    display: grid;
+  }
+
+  .error-actions .pill,
+  .error-actions .community-button {
+    width: 100%;
+  }
+
+  .error-copy > strong {
+    font-size: clamp(4.8rem, 28vw, 7.5rem);
   }
 }

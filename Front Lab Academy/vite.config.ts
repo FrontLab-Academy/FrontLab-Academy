@@ -9,6 +9,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
+        '404': resolve(__dirname, 'src/pages/404.html'),
         index: resolve(__dirname, 'src/pages/index.html'),
         trilhas: resolve(__dirname, 'src/pages/trilhas.html'),
         roteiro: resolve(__dirname, 'src/pages/roteiro.html'),
