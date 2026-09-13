@@ -1,0 +1,47 @@
+name: Accessibility
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: accessibility-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pa11y:
+    name: pa11y WCAG 2 AA
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Start preview server
+        run: npm run preview -- --host 127.0.0.1 --port 4173 &
+
+      - name: Run accessibility checks
+        run: |
+          npx --yes wait-on http://127.0.0.1:4173
+          npx --yes pa11y-ci --config .pa11yci.json

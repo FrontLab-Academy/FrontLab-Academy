@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  node-ci:
+    name: Node CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run available project scripts
+        shell: bash
+        run: |
+          for script in lint typecheck test build; do
+            if node -e "const scripts = require('./package.json').scripts || {}; process.exit(scripts['$script'] ? 0 : 1)"; then
+              echo "Running npm script: $script"
+              npm run "$script"
+            else
+              echo "Skipping missing npm script: $script"
+            fi
+          done

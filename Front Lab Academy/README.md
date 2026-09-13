@@ -11,6 +11,20 @@ A navegação foi pensada para consulta rápida durante aulas, revisões e exerc
 - `npm run build`
 - `npm run preview`
 
+## Automação
+- `CI`: instala com `npm ci` e executa apenas scripts existentes entre `lint`, `typecheck`, `test` e `build`.
+- `CodeQL`: análise semanal e em alterações na `main` para JavaScript/TypeScript.
+- `Links`: verificação semanal e em alterações na `main` para links em Markdown e HTML.
+- `Accessibility`: auditoria com `pa11y-ci` em páginas principais usando WCAG 2 AA.
+- `Lighthouse`: auditoria de Performance, Accessibility, Best Practices e SEO.
+- `Dependabot`: atualizações semanais de dependências npm e GitHub Actions, sem auto-merge.
+
+### Thresholds do Lighthouse
+- Accessibility: mínimo `0.90` e falha o workflow.
+- Performance: mínimo `0.65` como aviso.
+- Best Practices: mínimo `0.80` como aviso.
+- SEO: mínimo `0.80` como aviso.
+
 ## Estrutura
 - `src/pages/`: páginas HTML do site
 - `src/styles/style.css`: tema, cards, bordas e responsividade

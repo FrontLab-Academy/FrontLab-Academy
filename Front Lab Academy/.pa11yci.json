@@ -1,0 +1,23 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 30000,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox"]
+    }
+  },
+  "urls": [
+    "http://127.0.0.1:4173/",
+    "http://127.0.0.1:4173/trilhas.html",
+    "http://127.0.0.1:4173/roteiro.html",
+    "http://127.0.0.1:4173/exercicios.html",
+    "http://127.0.0.1:4173/desafios.html",
+    "http://127.0.0.1:4173/projetos.html",
+    "http://127.0.0.1:4173/pratica.html",
+    "http://127.0.0.1:4173/documentacao.html",
+    "http://127.0.0.1:4173/mini-ide.html",
+    "http://127.0.0.1:4173/modulos.html",
+    "http://127.0.0.1:4173/progresso.html",
+    "http://127.0.0.1:4173/sobre.html"
+  ]
+}
