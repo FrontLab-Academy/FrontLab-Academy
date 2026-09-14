@@ -11,7 +11,7 @@
   --purple: #7C3AED;
   --purple-hover: #6D28D9;
   --blue: #2563EB;
-  --cyan: #0891B2;
+  --cyan: #007C99;
   --green: #16A34A;
   --yellow: #CA8A04;
   --red: #DC2626;
@@ -120,7 +120,10 @@ pre {
 .bg-bgMain { background-color: var(--bg-main) !important; }
 .bg-bgSecondary { background-color: var(--bg-secondary) !important; }
 .bg-card { background-color: var(--card) !important; }
-.bg-purple { background-color: var(--blue) !important; }
+.bg-purple {
+  background-color: var(--blue) !important;
+  color: #ffffff !important;
+}
 .hover\:bg-purpleHover:hover { background-color: var(--purple-hover) !important; }
 .text-cyan { color: var(--cyan) !important; }
 .text-textMain { color: var(--text-main) !important; }
