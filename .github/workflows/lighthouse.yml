@@ -1,4 +1,4 @@
-name: Accessibility
+name: Lighthouse
 
 on:
   push:
@@ -13,14 +13,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: accessibility-${{ github.ref }}
+  group: lighthouse-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  pa11y:
-    name: pa11y WCAG 2 AA
+  lighthouse:
+    name: Lighthouse CI
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: Front Lab Academy
 
     steps:
       - name: Checkout repository
@@ -31,6 +34,7 @@ jobs:
         with:
           node-version: lts/*
           cache: npm
+          cache-dependency-path: Front Lab Academy/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -38,10 +42,5 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Start preview server
-        run: npm run preview -- --host 127.0.0.1 --port 4173 &
-
-      - name: Run accessibility checks
-        run: |
-          npx --yes wait-on http://127.0.0.1:4173
-          npx --yes pa11y-ci --config .pa11yci.json
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli autorun --config=./lighthouserc.cjs

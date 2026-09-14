@@ -21,6 +21,9 @@ jobs:
     name: Node CI
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: Front Lab Academy
 
     steps:
       - name: Checkout repository
@@ -31,6 +34,7 @@ jobs:
         with:
           node-version: lts/*
           cache: npm
+          cache-dependency-path: Front Lab Academy/package-lock.json
 
       - name: Install dependencies
         run: npm ci

@@ -27,4 +27,4 @@ jobs:
       - name: Check Markdown and HTML links
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --verbose --no-progress --exclude-mail './README.md' './src/**/*.html'
+          args: --verbose --no-progress --exclude-mail './README.md' './Front Lab Academy/README.md' './Front Lab Academy/src/**/*.html'
