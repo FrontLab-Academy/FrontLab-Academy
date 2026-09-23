@@ -99,15 +99,35 @@
     </header>
 
     <main class="mx-auto w-[94%] max-w-[1280px] py-8">
-      <section id="trilhas" class="section-block">
-        <div class="section-head">
-          <h2>Trilhas principais</h2>
-          <p>
-            Conteúdo organizado para estudo progressivo e revisão direcionada.
-          </p>
+      <section class="tracks-hero" aria-labelledby="tracks-title">
+        <div class="tracks-hero-copy">
+          <span class="eyebrow">Plano de estudos</span>
+          <h1 id="tracks-title">Encontre sua próxima trilha.</h1>
+          <p>Do primeiro HTML ao front-end profissional: escolha um caminho, avance no seu ritmo e registre cada módulo concluído.</p>
+          <div class="tracks-hero-actions">
+            <a class="tracks-primary-action" href="#catalogo">Explorar trilhas <span aria-hidden="true">↓</span></a>
+            <a class="tracks-secondary-action" href="./roteiro.html">Ver roadmap</a>
+          </div>
+        </div>
+        <aside class="tracks-hero-summary" aria-label="Resumo das trilhas">
+          <div class="summary-orbit" aria-hidden="true">✦</div>
+          <span>Seu catálogo</span>
+          <strong id="tracksTotal">0 trilhas</strong>
+          <p id="modulesTotal">0 módulos para explorar</p>
+          <div class="summary-line"><span></span><span></span><span></span></div>
+        </aside>
+      </section>
+
+      <section id="catalogo" class="section-block tracks-catalog">
+        <div class="section-head tracks-section-head">
+          <div>
+            <span class="eyebrow">Catálogo completo</span>
+            <h2>Escolha por onde começar</h2>
+          </div>
+          <p id="trackResultCount" aria-live="polite"></p>
         </div>
 
-        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="track-tools">
           <div class="flex flex-wrap gap-2" id="trackFilters">
             <button data-filter="all" class="pill active">Todas</button>
             <button data-filter="iniciante" class="pill">Iniciante</button>
@@ -126,7 +146,7 @@
           />
         </div>
 
-        <div id="trackList" class="grid gap-3"></div>
+        <div id="trackList" class="grid gap-3" aria-live="polite"></div>
       </section>
 
       <div class="mt-4">

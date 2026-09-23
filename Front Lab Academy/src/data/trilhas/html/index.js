@@ -2,6 +2,7 @@ import { htmlModules } from './modulos.js'
 
 export const htmlTrack = {
     name: 'HTML', level: 'iniciante', levelLabel: 'Iniciante',
+    available: true,
     tags: ['HTML', 'Semântica', 'Formulários', 'SEO', 'Acessibilidade'],
     accent: '#F97316', iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',
     description: 'Aprenda HTML do zero com 50 módulos, avançando dos fundamentos até páginas completas, formulários, semântica, SEO, acessibilidade e projetos práticos.',
