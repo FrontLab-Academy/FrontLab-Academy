@@ -17,6 +17,9 @@ let activeTab = 'html'
 const trackList = document.getElementById('trackList')
 const filterContainer = document.getElementById('trackFilters')
 const searchInput = document.getElementById('trackSearch')
+const trackResultCount = document.getElementById('trackResultCount')
+const tracksTotal = document.getElementById('tracksTotal')
+const modulesTotal = document.getElementById('modulesTotal')
 const roadmapSteps = document.getElementById('roadmapSteps')
 const editor = document.getElementById('editor')
 const preview = document.getElementById('preview')
@@ -597,6 +600,10 @@ function getTrackFromQuery() {
   return tracks.find((track) => track.slug === slug)
 }
 
+function isTrackAvailable(track) {
+  return track?.available === true
+}
+
 function renderTracks() {
   if (!trackList || !searchInput) return
   const query = searchInput.value.trim().toLowerCase()
@@ -610,19 +617,39 @@ function renderTracks() {
     return matchesFilter && matchesSearch
   })
 
+  const availableTracks = tracks.filter(isTrackAvailable)
+  if (tracksTotal) tracksTotal.textContent = `${availableTracks.length} trilhas disponíveis`
+  if (modulesTotal) modulesTotal.textContent = `${availableTracks.reduce((total, track) => total + track.modules.length, 0)} módulos para explorar`
+  if (trackResultCount) trackResultCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'trilha encontrada' : 'trilhas encontradas'}`
+
+  if (!filtered.length) {
+    trackList.innerHTML = `
+      <div class="tracks-empty">
+        <span aria-hidden="true">⌕</span>
+        <h3>Nenhuma trilha encontrada</h3>
+        <p>Tente outro termo ou remova os filtros para ver todo o catálogo.</p>
+        <button class="pill clear-track-filters" type="button">Limpar filtros</button>
+      </div>
+    `
+    return
+  }
+
   trackList.innerHTML = filtered.map((track) => {
+    const progress = getTrackProgressSummary(track)
     const tagsMarkup = track.tags.map((tag) => `<span class="track-tag">${tag}</span>`).join('')
+    const available = isTrackAvailable(track)
     return `
-      <article class="content-card track-card" style="--track-accent:${track.accent}">
-        <a class="track-click" href="./modulos.html?trilha=${track.slug}">
+      <article class="content-card track-card ${available ? '' : 'track-card-locked'}" style="--track-accent:${track.accent}">
+        ${available ? `<a class="track-click" href="./modulos.html?trilha=${track.slug}">` : '<div class="track-click" aria-label="Trilha bloqueada">'}
           <div class="track-main">
             <div class="track-icon"><img src="${track.iconUrl}" alt="Ícone ${track.name}" loading="lazy" /></div>
             <div><div class="track-tags">${tagsMarkup}</div><h3>${track.name}</h3><p>${track.description}</p></div>
           </div>
-          <p class="track-meta">Nível: ${track.levelLabel}</p>
-          <p class="track-open">Abrir módulos</p>
-          <div><div class="mb-2 track-focus">Foco: prática aplicada</div><div class="progress-shell"><div class="progress-fill" style="width:100%"></div></div></div>
-        </a>
+          <p class="track-meta"><strong>${track.modules.length}</strong> módulos<br>Nível: ${track.levelLabel}</p>
+          ${available
+            ? '<p class="track-open">Ver trilha <span aria-hidden="true">→</span></p><div class="track-progress"><div class="mb-2 track-focus">' + (progress.completed ? `${progress.completed}/${progress.total} concluídos` : 'Prática aplicada') + `</div><div class="progress-shell"><div class="progress-fill" style="width:${progress.percent}%"></div></div></div>`
+            : '<p class="track-locked-label"><span aria-hidden="true">🔒</span> Em breve</p><div class="track-progress"><div class="mb-2 track-focus">Conteúdo em preparação</div><div class="progress-shell"><div class="progress-fill" style="width:0%"></div></div></div>'}
+        ${available ? '</a>' : '</div>'}
       </article>
     `
   }).join('')
@@ -949,7 +976,29 @@ function renderModulesPage() {
     moduleTrailMeta.textContent = ''
     if (moduleTrailProgress) moduleTrailProgress.innerHTML = ''
     moduleMenuList.innerHTML = ''
+    const moduleMenu = moduleMenuList.closest('.module-menu')
+    if (moduleMenu) moduleMenu.hidden = true
     moduleContent.innerHTML = '<article class="content-card"><p>Não foi possível carregar os módulos.</p></article>'
+    finalChallengeBox.innerHTML = ''
+    const challengeSection = finalChallengeBox.closest('.section-block')
+    if (challengeSection) challengeSection.hidden = true
+    return
+  }
+
+  if (!isTrackAvailable(track)) {
+    moduleTrailTitle.textContent = `${track.name} está em preparação`
+    moduleTrailDescription.textContent = 'Esta trilha ainda não foi liberada. Enquanto isso, você pode começar pelas trilhas de HTML e CSS.'
+    moduleTrailMeta.textContent = 'Em breve'
+    if (moduleTrailProgress) moduleTrailProgress.innerHTML = ''
+    moduleMenuList.innerHTML = ''
+    moduleContent.innerHTML = `
+      <article class="content-card locked-track-notice" style="--track-accent:${track.accent}">
+        <span aria-hidden="true">🔒</span>
+        <h3>Trilha bloqueada por enquanto</h3>
+        <p>Estamos preparando os módulos, práticas e desafios de ${track.name}. Volte em breve para acompanhar o lançamento.</p>
+        <a class="pill" href="./trilhas.html">Ver trilhas disponíveis</a>
+      </article>
+    `
     finalChallengeBox.innerHTML = ''
     return
   }
@@ -994,7 +1043,8 @@ function renderModulesPage() {
 function renderProgressPage() {
   if (!progressDashboard) return
 
-  const totals = tracks.reduce((acc, track) => {
+  const availableTracks = tracks.filter(isTrackAvailable)
+  const totals = availableTracks.reduce((acc, track) => {
     const summary = getTrackProgressSummary(track)
     return {
       completed: acc.completed + summary.completed,
@@ -1004,6 +1054,14 @@ function renderProgressPage() {
   const totalPercent = totals.total ? Math.round((totals.completed / totals.total) * 100) : 0
 
   const cards = tracks.map((track) => {
+    if (!isTrackAvailable(track)) {
+      return `
+        <article class="content-card progress-track-card progress-track-locked" style="--track-accent:${track.accent}">
+          <div class="progress-track-head"><div><p class="module-kicker">Em breve</p><h3>${track.name}</h3><p>Conteúdo em preparação.</p></div><strong aria-label="Trilha bloqueada">🔒</strong></div>
+          <div class="progress-track-meta"><span>Os módulos serão liberados em breve.</span></div>
+        </article>
+      `
+    }
     const summary = getTrackProgressSummary(track)
     const moduleRows = track.modules.map((module, index) => {
       const state = getModuleProgressState(track.slug, index)
@@ -1097,6 +1155,16 @@ if (filterContainer) {
 }
 
 if (searchInput) searchInput.addEventListener('input', renderTracks)
+
+trackList?.addEventListener('click', (event) => {
+  if (!event.target.closest('.clear-track-filters')) return
+  activeFilter = 'all'
+  if (searchInput) searchInput.value = ''
+  filterContainer?.querySelectorAll('.pill').forEach((button) => {
+    button.classList.toggle('active', button.dataset.filter === 'all')
+  })
+  renderTracks()
+})
 
 if (moduleContent) {
   moduleContent.addEventListener('click', (event) => {
