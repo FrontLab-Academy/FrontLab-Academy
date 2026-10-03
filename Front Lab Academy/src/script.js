@@ -1209,7 +1209,10 @@ if (practiceDetail) {
 
 if (moduleMenuToggle && moduleMenuList) {
   moduleMenuToggle.addEventListener('click', () => {
-    moduleMenuList.classList.toggle('collapsed')
+    const isCollapsed = moduleMenuList.classList.toggle('collapsed')
+    moduleMenuToggle.setAttribute('aria-expanded', String(!isCollapsed))
+    moduleMenuList.setAttribute('aria-hidden', String(isCollapsed))
+    moduleMenuList.toggleAttribute('inert', isCollapsed)
   })
 }
 
