@@ -2,6 +2,7 @@ import { tracks } from './data/trilhas.js'
 import { roadmap } from './data/roteiro.js'
 import { practiceItems } from './data/praticas.js'
 import { slugify } from './utils/gerar-slug.js'
+import { calculateProgressSummary, clampModuleIndex, getModuleHash, getModuleIndexFromHash, setModuleCompletion } from './features/estado-modulos.js'
 import './styles/style.css'
 
 const editorState = {
@@ -388,28 +389,12 @@ function getModuleProgressState(trackSlug, index) {
 
 function updateModuleCompletion(trackSlug, index, isComplete) {
   const progress = readTrackProgress(trackSlug)
-  const key = String(index)
-  const current = progress.modules[key] || {}
-
-  progress.modules[key] = {
-    completedAt: isComplete ? current.completedAt || new Date().toISOString() : null
-  }
-
-  return saveTrackProgress(trackSlug, progress)
+  return saveTrackProgress(trackSlug, setModuleCompletion(progress, index, isComplete))
 }
 
 function getTrackProgressSummary(track) {
-  const total = track.modules.length
-  const completed = track.modules.filter((_, index) => isModuleComplete(track.slug, index)).length
-  const started = track.modules.filter((_, index) => getModuleProgressState(track.slug, index) === 'started').length
-  const percent = total ? Math.round((completed / total) * 100) : 0
-
-  return {
-    total,
-    completed,
-    started,
-    percent
-  }
+  const states = track.modules.map((_, index) => getModuleProgressState(track.slug, index))
+  return calculateProgressSummary(states)
 }
 
 function renderProgressBar(percent) {
@@ -1083,8 +1068,8 @@ function renderModulesPage() {
   updateCurrentTrackProgress(track)
 
   const showModule = (index, shouldScroll = false, updateUrl = true) => {
-    const selectedIndex = Math.min(Math.max(index, 0), track.modules.length - 1)
-    const moduleHash = `#mod-${selectedIndex}`
+    const selectedIndex = clampModuleIndex(index, track.modules.length)
+    const moduleHash = getModuleHash(selectedIndex, track.modules.length)
     if (updateUrl && window.location.hash !== moduleHash) {
       window.history.pushState(null, '', moduleHash)
     }
@@ -1113,7 +1098,7 @@ function renderModulesPage() {
   bindModuleMenuInteractions(showModule)
   moduleContent.dataset.hasModulePager = 'true'
   moduleContent.showModule = showModule
-  const getModuleFromHash = () => Number((window.location.hash.match(/^#mod-(\d+)$/) || [])[1] || 0)
+  const getModuleFromHash = () => getModuleIndexFromHash(window.location.hash, track.modules.length)
   showModule(getModuleFromHash(), false, false)
   window.addEventListener('popstate', () => showModule(getModuleFromHash(), false, false))
 }
@@ -1200,7 +1185,8 @@ function bindModuleMenuInteractions(showModule) {
   links.forEach((link) => {
     link.addEventListener('click', (event) => {
       event.preventDefault()
-      showModule(Number(link.dataset.moduleIndex || 0), true)
+      const index = Number(link.dataset.moduleIndex || 0)
+      showModule(index, true)
     })
   })
 }
