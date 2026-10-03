@@ -197,7 +197,7 @@ function updateDiscordInviteLinks(inviteUrl) {
 
 function renderDiscordChannels(channels = []) {
   const visibleChannels = channels.slice(0, 3)
-  if (!visibleChannels.length) return '<span># lounge</span><span># estudos</span><span># projetos</span>'
+  if (!visibleChannels.length) return '<span class="discord-muted">Canais indisponíveis no momento.</span>'
 
   return visibleChannels
     .map((channel) => `<span># ${escapeHtml(slugify(channel.name || 'canal'))}</span>`)
@@ -275,7 +275,7 @@ async function initDiscordCommunityCards() {
 
       if (name) name.textContent = 'FrontLab Community'
       if (online) online.textContent = '--'
-      if (channels) channels.innerHTML = '<span># lounge</span><span># estudos</span><span># projetos</span>'
+      if (channels) channels.innerHTML = renderDiscordChannels()
       if (members) members.innerHTML = '<span class="discord-muted">Entre para acompanhar a comunidade por dentro.</span>'
       if (message) message.hidden = false
     })
