@@ -301,8 +301,9 @@ function readStorageJson(key, fallback) {
 function writeStorageJson(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value))
+    return true
   } catch {
-    // Storage can be unavailable in private browsing or sandboxed previews.
+    return false
   }
 }
 
@@ -326,7 +327,7 @@ function readTrackProgress(trackSlug) {
 }
 
 function saveTrackProgress(trackSlug, progress) {
-  writeStorageJson(getTrackProgressKey(trackSlug), progress)
+  return writeStorageJson(getTrackProgressKey(trackSlug), progress)
 }
 
 function getModuleProgress(trackSlug, index) {
@@ -357,7 +358,7 @@ function updateModuleCompletion(trackSlug, index, isComplete) {
     completedAt: isComplete ? current.completedAt || new Date().toISOString() : null
   }
 
-  saveTrackProgress(trackSlug, progress)
+  return saveTrackProgress(trackSlug, progress)
 }
 
 function getTrackProgressSummary(track) {
@@ -1191,9 +1192,14 @@ if (moduleContent) {
       const track = tracks.find((item) => item.slug === trackSlug)
       if (!track) return
 
-      updateModuleCompletion(track.slug, moduleIndex, !isCompleted)
+      const wasSaved = updateModuleCompletion(track.slug, moduleIndex, !isCompleted)
       updateCurrentTrackProgress(track)
       moduleContent.showModule(moduleIndex)
+      if (!wasSaved) {
+        moduleContent.insertAdjacentHTML('afterbegin', `
+          <p class="storage-warning" role="alert">Não foi possível salvar o progresso neste navegador. Verifique as permissões de armazenamento e tente novamente.</p>
+        `)
+      }
     }
   })
 }

@@ -2040,6 +2040,16 @@ pre {
   opacity: 0.42;
 }
 
+.storage-warning {
+  margin: 0 0 0.75rem;
+  border: 1px solid var(--yellow);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--yellow) 12%, var(--card));
+  color: var(--text-main);
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+}
+
 .module-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
