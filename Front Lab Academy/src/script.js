@@ -491,7 +491,7 @@ function renderPracticeDetail() {
     practiceDetail.innerHTML = `
       <section class="section-block">
         <div class="section-head">
-          <h2>Prática não encontrada</h2>
+          <h1>Prática não encontrada</h1>
           <p>Volte para a lista e escolha um exercício ou desafio disponível.</p>
         </div>
         <a class="pill inline-flex" href="${backHref}">Voltar para a lista</a>
@@ -513,7 +513,7 @@ function renderPracticeDetail() {
       <a class="pill inline-flex" href="${backHref}">Voltar</a>
       <div class="section-head">
         <p class="module-kicker">${typeLabel}</p>
-        <h2>${item.title}</h2>
+        <h1>${item.title}</h1>
         <p>${item.summary}</p>
       </div>
       <div class="practice-tags">${tags}</div>
