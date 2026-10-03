@@ -146,6 +146,7 @@ function highlightCodeBlocks(root = document) {
 
 function initPageTransitions() {
   document.body.classList.add('page-ready')
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   const links = document.querySelectorAll('a[href]')
   links.forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -1021,7 +1022,8 @@ function renderModulesPage() {
     updateCurrentTrackProgress(track)
 
     if (shouldScroll) {
-      moduleContent.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      moduleContent.scrollIntoView({ behavior, block: 'start' })
     }
   }
 
