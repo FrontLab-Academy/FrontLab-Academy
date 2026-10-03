@@ -978,7 +978,12 @@ function renderModulesPage() {
     moduleMenuList.innerHTML = ''
     const moduleMenu = moduleMenuList.closest('.module-menu')
     if (moduleMenu) moduleMenu.hidden = true
-    moduleContent.innerHTML = '<article class="content-card"><p>Não foi possível carregar os módulos.</p></article>'
+    moduleContent.innerHTML = `
+      <article class="content-card">
+        <p>Não foi possível carregar os módulos.</p>
+        <a class="pill inline-flex" href="./trilhas.html">Voltar para as trilhas</a>
+      </article>
+    `
     finalChallengeBox.innerHTML = ''
     const challengeSection = finalChallengeBox.closest('.section-block')
     if (challengeSection) challengeSection.hidden = true
