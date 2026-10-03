@@ -1011,8 +1011,12 @@ function renderModulesPage() {
   moduleMenuList.innerHTML = renderModuleMenu(track)
   updateCurrentTrackProgress(track)
 
-  const showModule = (index, shouldScroll = false) => {
+  const showModule = (index, shouldScroll = false, updateUrl = true) => {
     const selectedIndex = Math.min(Math.max(index, 0), track.modules.length - 1)
+    const moduleHash = `#mod-${selectedIndex}`
+    if (updateUrl && window.location.hash !== moduleHash) {
+      window.history.pushState(null, '', moduleHash)
+    }
     moduleContent.innerHTML = renderModuleCard(track, track.modules[selectedIndex], selectedIndex)
     moduleMenuList.querySelectorAll('.module-link').forEach((link) => {
       link.classList.toggle('active', Number(link.dataset.moduleIndex) === selectedIndex)
@@ -1036,8 +1040,9 @@ function renderModulesPage() {
   bindModuleMenuInteractions(showModule)
   moduleContent.dataset.hasModulePager = 'true'
   moduleContent.showModule = showModule
-  const initialModule = Number((window.location.hash.match(/^#mod-(\d+)$/) || [])[1] || 0)
-  showModule(initialModule)
+  const getModuleFromHash = () => Number((window.location.hash.match(/^#mod-(\d+)$/) || [])[1] || 0)
+  showModule(getModuleFromHash(), false, false)
+  window.addEventListener('popstate', () => showModule(getModuleFromHash(), false, false))
 }
 
 function renderProgressPage() {
