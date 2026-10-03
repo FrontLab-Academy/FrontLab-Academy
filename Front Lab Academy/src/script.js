@@ -291,6 +291,20 @@ function escapeHtml(value) {
     .replace(/'/g, '&#039;')
 }
 
+function safeCssColor(value, fallback = 'var(--blue)') {
+  const color = String(value || '')
+  return /^(#[\da-f]{3,8}|var\(--[\w-]+\))$/i.test(color) ? color : fallback
+}
+
+function safeHttpUrl(value, fallback = '/favicon.svg') {
+  try {
+    const url = new URL(String(value), window.location.origin)
+    return ['http:', 'https:'].includes(url.protocol) ? escapeHtml(url.href) : fallback
+  } catch {
+    return fallback
+  }
+}
+
 function readStorageJson(key, fallback) {
   try {
     const saved = localStorage.getItem(key)
@@ -469,17 +483,17 @@ function getModuleStateLabel(state) {
 }
 
 function renderPracticeCard(item, type) {
-  const tags = item.tags.map((tag) => `<span>${tag}</span>`).join('')
+  const tags = item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')
   const typeLabel = type === 'projeto' ? 'Projeto' : type === 'desafio' ? 'Desafio' : 'Exercício'
 
   return `
-    <a class="content-card practice-card" href="./pratica.html?tipo=${type}&id=${item.id}">
+    <a class="content-card practice-card" href="./pratica.html?tipo=${encodeURIComponent(type)}&id=${encodeURIComponent(item.id)}">
       <div class="practice-card-head">
         <span>${typeLabel}</span>
-        <span>${item.level}</span>
+        <span>${escapeHtml(item.level)}</span>
       </div>
-      <h3>${item.title}</h3>
-      <p>${item.summary}</p>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.summary)}</p>
       <div class="practice-tags">${tags}</div>
       <strong>Ver esqueleto</strong>
     </a>
@@ -530,13 +544,13 @@ function renderPracticeDetail() {
   const structure = item.structure.map((part, index) => `
     <li>
       <span>${String(index + 1).padStart(2, '0')}</span>
-      <p>${part}</p>
+      <p>${escapeHtml(part)}</p>
     </li>
   `).join('')
-  const tags = item.tags.map((tag) => `<span>${tag}</span>`).join('')
+  const tags = item.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('')
   const criteria = Array.isArray(item.criteria) ? item.criteria : []
   const criteriaMarkup = criteria.length
-    ? `<ul class="module-list">${criteria.map((criterion) => `<li>${criterion}</li>`).join('')}</ul>`
+    ? `<ul class="module-list">${criteria.map((criterion) => `<li>${escapeHtml(criterion)}</li>`).join('')}</ul>`
     : '<p>Os critérios de aceite ainda não foram definidos para esta prática.</p>'
 
   practiceDetail.innerHTML = `
@@ -544,8 +558,8 @@ function renderPracticeDetail() {
       <a class="pill inline-flex" href="${backHref}">Voltar</a>
       <div class="section-head">
         <p class="module-kicker">${typeLabel}</p>
-        <h1>${item.title}</h1>
-        <p>${item.summary}</p>
+        <h1>${escapeHtml(item.title)}</h1>
+        <p>${escapeHtml(item.summary)}</p>
       </div>
       <div class="practice-tags">${tags}</div>
     </section>
@@ -553,11 +567,11 @@ function renderPracticeDetail() {
     <section class="practice-brief-grid">
       <article class="content-card">
         <h3>Contexto</h3>
-        <p>${item.scenario}</p>
+        <p>${escapeHtml(item.scenario)}</p>
       </article>
       <article class="content-card">
         <h3>Objetivo</h3>
-        <p>${item.goal}</p>
+        <p>${escapeHtml(item.goal)}</p>
       </article>
     </section>
 
@@ -677,16 +691,17 @@ function renderTracks() {
 
   trackList.innerHTML = filtered.map((track) => {
     const progress = getTrackProgressSummary(track)
-    const tagsMarkup = track.tags.map((tag) => `<span class="track-tag">${tag}</span>`).join('')
+    const tagsMarkup = track.tags.map((tag) => `<span class="track-tag">${escapeHtml(tag)}</span>`).join('')
     const available = isTrackAvailable(track)
+    const accent = safeCssColor(track.accent)
     return `
-      <article class="content-card track-card ${available ? '' : 'track-card-locked'}" style="--track-accent:${track.accent}">
-        ${available ? `<a class="track-click" href="./modulos.html?trilha=${track.slug}">` : '<div class="track-click" aria-label="Trilha bloqueada">'}
+      <article class="content-card track-card ${available ? '' : 'track-card-locked'}" style="--track-accent:${accent}">
+        ${available ? `<a class="track-click" href="./modulos.html?trilha=${encodeURIComponent(track.slug)}">` : '<div class="track-click" aria-label="Trilha bloqueada">'}
           <div class="track-main">
-            <div class="track-icon"><img src="${track.iconUrl}" alt="Ícone ${track.name}" loading="lazy" /></div>
-            <div><div class="track-tags">${tagsMarkup}</div><h3>${track.name}</h3><p>${track.description}</p></div>
+            <div class="track-icon"><img src="${safeHttpUrl(track.iconUrl)}" alt="Ícone ${escapeHtml(track.name)}" loading="lazy" /></div>
+            <div><div class="track-tags">${tagsMarkup}</div><h3>${escapeHtml(track.name)}</h3><p>${escapeHtml(track.description)}</p></div>
           </div>
-          <p class="track-meta"><strong>${track.modules.length}</strong> módulos<br>Nível: ${track.levelLabel}</p>
+          <p class="track-meta"><strong>${track.modules.length}</strong> módulos<br>Nível: ${escapeHtml(track.levelLabel)}</p>
           ${available
             ? '<p class="track-open">Ver trilha <span aria-hidden="true">→</span></p><div class="track-progress"><div class="mb-2 track-focus">' + (progress.completed ? `${progress.completed}/${progress.total} concluídos` : 'Prática aplicada') + `</div><div class="progress-shell"><div class="progress-fill" style="width:${progress.percent}%"></div></div></div>`
             : '<p class="track-locked-label"><span aria-hidden="true">🔒</span> Em breve</p><div class="track-progress"><div class="mb-2 track-focus">Conteúdo em preparação</div><div class="progress-shell"><div class="progress-fill" style="width:0%"></div></div></div>'}
@@ -772,15 +787,15 @@ function renderRoadmap() {
       const track = tracks.find((item) => item.slug === step.trail)
       const title = step.title.replace(/^\d+\.\s*/, '')
       const number = section.complementary ? `B${index + 1}` : String(stepNumber++).padStart(2, '0')
-      const accent = track?.accent || 'var(--purple)'
+      const accent = safeCssColor(track?.accent, 'var(--purple)')
       const trackName = track?.name || 'Trilha'
 
       return `
-        <a class="road-step" style="--track-accent:${accent}" href="./modulos.html?trilha=${step.trail}#mod-${step.mod}">
+        <a class="road-step" style="--track-accent:${accent}" href="./modulos.html?trilha=${encodeURIComponent(step.trail)}#mod-${Number(step.mod)}">
           <span class="road-num">${number}</span>
           <div>
-            <p class="road-track">${trackName}</p>
-            <h3>${title}</h3>
+            <p class="road-track">${escapeHtml(trackName)}</p>
+            <h3>${escapeHtml(title)}</h3>
             <p>Abrir módulo recomendado</p>
           </div>
         </a>
@@ -788,11 +803,11 @@ function renderRoadmap() {
     }).join('')
 
     return `
-      <section class="roadmap-section" style="--section-accent:${sectionAccent}">
+      <section class="roadmap-section" style="--section-accent:${safeCssColor(sectionAccent)}">
         <div class="roadmap-section-head">
           <div>
-            <h3>${section.title}</h3>
-            <p>${section.description}</p>
+            <h3>${escapeHtml(section.title)}</h3>
+            <p>${escapeHtml(section.description)}</p>
           </div>
           <span>${section.steps.length} ${section.complementary ? 'etapas complementares' : 'etapas'}</span>
         </div>
@@ -912,7 +927,7 @@ function renderModuleStudy(module) {
 }
 
 function renderModuleCard(track, module, index) {
-  const learnItems = module.learn.map((item) => `<li>${item}</li>`).join('')
+  const learnItems = module.learn.map((item) => `<li>${escapeHtml(item)}</li>`).join('')
   const moduleLevel = module.level || track.levelLabel
   const moduleTime = module.time || '30 min'
   const moduleCategory = module.category || track.name
@@ -937,23 +952,23 @@ function renderModuleCard(track, module, index) {
   const hasNext = index < track.modules.length - 1
 
   return `
-    <article id="mod-${index}" class="content-card module-card" style="--track-accent:${track.accent}" aria-labelledby="module-title-${index}" data-track-slug="${track.slug}" data-module-index="${index}">
+    <article id="mod-${index}" class="content-card module-card" style="--track-accent:${safeCssColor(track.accent)}" aria-labelledby="module-title-${index}" data-track-slug="${track.slug}" data-module-index="${index}">
       <div class="module-card-head">
         <div>
           <p class="module-kicker">Módulo ${index + 1} de ${track.modules.length}</p>
-          <h3 id="module-title-${index}" data-module-title tabindex="-1">${module.title}</h3>
+          <h3 id="module-title-${index}" data-module-title tabindex="-1">${escapeHtml(module.title)}</h3>
         </div>
         <div class="module-badges">
-          <span>${moduleCategory}</span>
-          <span>${moduleLevel}</span>
-          <span>${moduleTime}</span>
+          <span>${escapeHtml(moduleCategory)}</span>
+          <span>${escapeHtml(moduleLevel)}</span>
+          <span>${escapeHtml(moduleTime)}</span>
         </div>
       </div>
-      <p class="module-description">${moduleDescription}</p>
+      <p class="module-description">${escapeHtml(moduleDescription)}</p>
       <div class="module-learning-grid">
         <div>
           <p><strong>Objetivo de aprendizado:</strong></p>
-          <p>${moduleObjective}</p>
+          <p>${escapeHtml(moduleObjective)}</p>
         </div>
         <div>
           <p><strong>Conteúdo resumido:</strong></p>
@@ -961,8 +976,8 @@ function renderModuleCard(track, module, index) {
         </div>
       </div>
       ${renderModuleStudy(module)}
-      <p><strong>Experiência prática:</strong> ${module.practice}</p>
-      <p><strong>Exercício de fixação:</strong> ${module.exercise}</p>
+      <p><strong>Experiência prática:</strong> ${escapeHtml(module.practice)}</p>
+      <p><strong>Exercício de fixação:</strong> ${escapeHtml(module.exercise)}</p>
       ${renderModuleCompletion(track, index)}
       <div class="module-ide">
         <h4>Mini IDE do módulo</h4>
@@ -996,7 +1011,7 @@ function renderModuleMenu(track) {
     return track.modules.map((module, index) => `
       <a href="#mod-${index}" class="module-link" data-module-index="${index}" data-progress-state="${getModuleProgressState(track.slug, index)}">
         <span data-progress-marker>${isModuleComplete(track.slug, index) ? '✓' : getModuleProgressState(track.slug, index) === 'started' ? '•' : ''}</span>
-        Módulo ${index + 1}: ${module.title}
+        Módulo ${index + 1}: ${escapeHtml(module.title)}
       </a>
     `).join('')
   }
@@ -1009,7 +1024,7 @@ function renderModuleMenu(track) {
           <a href="#mod-${index}" class="module-link" data-module-index="${index}" data-progress-state="${getModuleProgressState(track.slug, index)}">
             <span>${String(index + 1).padStart(2, '0')}</span>
             <span data-progress-marker>${isModuleComplete(track.slug, index) ? '✓' : getModuleProgressState(track.slug, index) === 'started' ? '•' : ''}</span>
-            ${module.title}
+            ${escapeHtml(module.title)}
           </a>
         `).join('')}
       </div>
@@ -1088,10 +1103,10 @@ function renderModulesPage() {
   }
 
   finalChallengeBox.innerHTML = `
-    <article class="content-card" style="--track-accent:${track.accent}">
-      <h3>${track.challenge.title}</h3>
-      <p><strong>Objetivo:</strong> ${track.challenge.brief}</p>
-      <p><strong>Para portfólio:</strong> ${track.challenge.portfolio}</p>
+    <article class="content-card" style="--track-accent:${safeCssColor(track.accent)}">
+      <h3>${escapeHtml(track.challenge.title)}</h3>
+      <p><strong>Objetivo:</strong> ${escapeHtml(track.challenge.brief)}</p>
+      <p><strong>Para portfólio:</strong> ${escapeHtml(track.challenge.portfolio)}</p>
     </article>
   `
 
