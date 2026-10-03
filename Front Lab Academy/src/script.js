@@ -507,6 +507,10 @@ function renderPracticeDetail() {
     </li>
   `).join('')
   const tags = item.tags.map((tag) => `<span>${tag}</span>`).join('')
+  const criteria = Array.isArray(item.criteria) ? item.criteria : []
+  const criteriaMarkup = criteria.length
+    ? `<ul class="module-list">${criteria.map((criterion) => `<li>${criterion}</li>`).join('')}</ul>`
+    : '<p>Os critérios de aceite ainda não foram definidos para esta prática.</p>'
 
   practiceDetail.innerHTML = `
     <section class="section-block practice-detail-hero">
@@ -527,6 +531,16 @@ function renderPracticeDetail() {
       <article class="content-card">
         <h3>Objetivo</h3>
         <p>${item.goal}</p>
+      </article>
+    </section>
+
+    <section class="section-block">
+      <div class="section-head">
+        <h2>Critérios de aceite</h2>
+        <p>Use esta lista para conferir se a solução atende ao objetivo da prática.</p>
+      </div>
+      <article class="content-card">
+        ${criteriaMarkup}
       </article>
     </section>
 
