@@ -904,11 +904,11 @@ function renderModuleCard(track, module, index) {
   const hasNext = index < track.modules.length - 1
 
   return `
-    <article id="mod-${index}" class="content-card module-card" style="--track-accent:${track.accent}">
+    <article id="mod-${index}" class="content-card module-card" style="--track-accent:${track.accent}" aria-labelledby="module-title-${index}">
       <div class="module-card-head">
         <div>
           <p class="module-kicker">Módulo ${index + 1} de ${track.modules.length}</p>
-          <h3>${module.title}</h3>
+          <h3 id="module-title-${index}" data-module-title tabindex="-1">${module.title}</h3>
         </div>
         <div class="module-badges">
           <span>${moduleCategory}</span>
@@ -1036,6 +1036,7 @@ function renderModulesPage() {
     updateCurrentTrackProgress(track)
 
     if (shouldScroll) {
+      moduleContent.querySelector('[data-module-title]')?.focus({ preventScroll: true })
       const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
       moduleContent.scrollIntoView({ behavior, block: 'start' })
     }
