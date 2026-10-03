@@ -488,6 +488,7 @@ function renderPracticeDetail() {
   const typeLabel = type === 'projeto' ? 'Blueprint do projeto' : type === 'desafio' ? 'Desafio pessoal' : 'Exercício pessoal'
 
   if (!item) {
+    document.title = 'Prática não encontrada - Front Lab Academy'
     practiceDetail.innerHTML = `
       <section class="section-block">
         <div class="section-head">
@@ -499,6 +500,8 @@ function renderPracticeDetail() {
     `
     return
   }
+
+  document.title = `${item.title} - Front Lab Academy`
 
   const structure = item.structure.map((part, index) => `
     <li>
