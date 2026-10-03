@@ -1143,10 +1143,10 @@ function bindModuleMenuInteractions(showModule) {
   })
 }
 
-function switchTab(tab) {
+function switchTab(tab, persistCurrent = true) {
   if (!editor || !editorTabs) return
   if (!editorTabsAllowed.has(tab)) return
-  editorState[activeTab] = editor.value
+  if (persistCurrent) editorState[activeTab] = editor.value
   activeTab = tab
   editor.dataset.activeTab = tab
   editor.value = editorState[activeTab]
@@ -1247,7 +1247,7 @@ if (newProject) {
     editorState.html = '<main>\n  <h1>Novo projeto</h1>\n  <p>Comece por HTML semântico, CSS responsivo e JS limpo.</p>\n</main>'
     editorState.css = 'body {\n  font-family: Inter, sans-serif;\n  margin: 0;\n}'
     editorState.js = "console.log('Novo projeto iniciado')"
-    switchTab('html')
+    switchTab('html', false)
     runPreview()
   })
 }
