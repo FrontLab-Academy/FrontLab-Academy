@@ -707,7 +707,8 @@ function renderRoadmap() {
     {
       title: 'Bootstrap e UI rápida',
       description: 'Grid, componentes prontos, utilitários e customização para entregar interfaces responsivas com velocidade.',
-      steps: bootstrapRoadmap
+      steps: bootstrapRoadmap,
+      complementary: true
     },
     {
       title: 'JavaScript e DOM',
@@ -745,10 +746,10 @@ function renderRoadmap() {
   roadmapSteps.innerHTML = sections.map((section) => {
     const sectionTrack = tracks.find((item) => item.slug === section.steps[0]?.trail)
     const sectionAccent = sectionTrack?.accent || 'var(--blue)'
-    const cards = section.steps.map((step) => {
+    const cards = section.steps.map((step, index) => {
       const track = tracks.find((item) => item.slug === step.trail)
       const title = step.title.replace(/^\d+\.\s*/, '')
-      const number = String(stepNumber++).padStart(2, '0')
+      const number = section.complementary ? `B${index + 1}` : String(stepNumber++).padStart(2, '0')
       const accent = track?.accent || 'var(--purple)'
       const trackName = track?.name || 'Trilha'
 
@@ -771,7 +772,7 @@ function renderRoadmap() {
             <h3>${section.title}</h3>
             <p>${section.description}</p>
           </div>
-          <span>${section.steps.length} etapas</span>
+          <span>${section.steps.length} ${section.complementary ? 'etapas complementares' : 'etapas'}</span>
         </div>
         <div class="roadmap-grid">${cards}</div>
       </section>
