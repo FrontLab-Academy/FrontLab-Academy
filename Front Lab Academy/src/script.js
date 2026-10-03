@@ -149,6 +149,7 @@ function initPageTransitions() {
   const links = document.querySelectorAll('a[href]')
   links.forEach((link) => {
     link.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
       const href = link.getAttribute('href')
       if (!href) return
       const isInternal = href.startsWith('/') || href.startsWith('./') || href.startsWith('../')
