@@ -313,6 +313,27 @@ function getTrackProgressKey(trackSlug) {
   return `front-lab-progress:${trackSlug}`
 }
 
+function getModuleDraftKey(trackSlug, index) {
+  return `front-lab-draft:${trackSlug}:${index}`
+}
+
+function readModuleDraft(trackSlug, index) {
+  const draft = readStorageJson(getModuleDraftKey(trackSlug, index), null)
+  return draft && typeof draft === 'object' ? draft : null
+}
+
+function saveModuleDraft(trackSlug, index, draft) {
+  writeStorageJson(getModuleDraftKey(trackSlug, index), draft)
+}
+
+function clearModuleDraft(trackSlug, index) {
+  try {
+    localStorage.removeItem(getModuleDraftKey(trackSlug, index))
+  } catch {
+    // The starter remains available even when storage is blocked.
+  }
+}
+
 function getEmptyTrackProgress() {
   return {
     modules: {}
@@ -899,18 +920,24 @@ function renderModuleCard(track, module, index) {
   const moduleObjective = module.objective || `Aplicar ${module.title.toLowerCase()} usando ${module.learn.slice(0, 2).join(' e ')} em um contexto realista de front-end.`
   const isHtmlTrack = track.slug === 'html'
   const ideGridClass = isHtmlTrack ? 'module-ide-grid html-only' : 'module-ide-grid'
+  const draft = readModuleDraft(track.slug, index)
+  const source = {
+    html: typeof draft?.html === 'string' ? draft.html : module.starter.html,
+    css: typeof draft?.css === 'string' ? draft.css : module.starter.css,
+    js: typeof draft?.js === 'string' ? draft.js : module.starter.js
+  }
   const ideFields = isHtmlTrack
-    ? `<label>index.html<textarea data-type="html">${escapeHtml(module.starter.html)}</textarea></label>`
+    ? `<label>index.html<textarea data-type="html">${escapeHtml(source.html)}</textarea></label>`
     : `
-          <label>index.html<textarea data-type="html">${escapeHtml(module.starter.html)}</textarea></label>
-          <label>style.css<textarea data-type="css">${escapeHtml(module.starter.css)}</textarea></label>
-          <label>script.js<textarea data-type="js">${escapeHtml(module.starter.js)}</textarea></label>
+          <label>index.html<textarea data-type="html">${escapeHtml(source.html)}</textarea></label>
+          <label>style.css<textarea data-type="css">${escapeHtml(source.css)}</textarea></label>
+          <label>script.js<textarea data-type="js">${escapeHtml(source.js)}</textarea></label>
         `
   const hasPrevious = index > 0
   const hasNext = index < track.modules.length - 1
 
   return `
-    <article id="mod-${index}" class="content-card module-card" style="--track-accent:${track.accent}" aria-labelledby="module-title-${index}">
+    <article id="mod-${index}" class="content-card module-card" style="--track-accent:${track.accent}" aria-labelledby="module-title-${index}" data-track-slug="${track.slug}" data-module-index="${index}">
       <div class="module-card-head">
         <div>
           <p class="module-kicker">Módulo ${index + 1} de ${track.modules.length}</p>
@@ -942,7 +969,10 @@ function renderModuleCard(track, module, index) {
         <div class="${ideGridClass}">
           ${ideFields}
         </div>
-        <button class="pill run-module-ide">Executar módulo</button>
+        <div class="flex flex-wrap gap-2">
+          <button class="pill run-module-ide" type="button">Executar módulo</button>
+          <button class="pill reset-module-ide" type="button">Restaurar código inicial</button>
+        </div>
         <iframe class="preview-frame module-preview" title="Preview módulo ${index + 1}" sandbox="allow-scripts"></iframe>
       </div>
       <div class="module-pager">
@@ -1215,6 +1245,14 @@ if (moduleContent) {
       return
     }
 
+    if (target.classList.contains('reset-module-ide') && typeof moduleContent.showModule === 'function') {
+      const moduleCard = target.closest('.module-card')
+      if (!(moduleCard instanceof HTMLElement)) return
+      clearModuleDraft(moduleCard.dataset.trackSlug, Number(moduleCard.dataset.moduleIndex || 0))
+      moduleContent.showModule(Number(moduleCard.dataset.moduleIndex || 0))
+      return
+    }
+
     if (target.classList.contains('module-step') && typeof moduleContent.showModule === 'function') {
       moduleContent.showModule(Number(target.dataset.moduleIndex || 0), true)
       return
@@ -1238,6 +1276,20 @@ if (moduleContent) {
         `)
       }
     }
+  })
+
+  moduleContent.addEventListener('input', (event) => {
+    const target = event.target
+    if (!(target instanceof HTMLTextAreaElement) || !target.matches('[data-type]')) return
+    const moduleCard = target.closest('.module-card')
+    if (!(moduleCard instanceof HTMLElement)) return
+
+    const getValue = (type) => moduleCard.querySelector(`textarea[data-type="${type}"]`)?.value || ''
+    saveModuleDraft(moduleCard.dataset.trackSlug, Number(moduleCard.dataset.moduleIndex || 0), {
+      html: getValue('html'),
+      css: getValue('css'),
+      js: getValue('js')
+    })
   })
 }
 
