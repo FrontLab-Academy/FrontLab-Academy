@@ -1133,8 +1133,13 @@ function switchTab(tab) {
   editorState[activeTab] = editor.value
   activeTab = tab
   editor.dataset.activeTab = tab
+  editor.setAttribute('aria-label', `Editor de código ${tab.toUpperCase()}`)
   editor.value = editorState[activeTab]
-  editorTabs.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tab === tab))
+  editorTabs.querySelectorAll('.tab-btn').forEach((btn) => {
+    const isActive = btn.dataset.tab === tab
+    btn.classList.toggle('active', isActive)
+    btn.setAttribute('aria-pressed', String(isActive))
+  })
 }
 
 function runPreview() {
@@ -1306,6 +1311,7 @@ createThemeToggle()
 
 if (editor) {
   editor.dataset.activeTab = activeTab
+  editor.setAttribute('aria-label', `Editor de código ${activeTab.toUpperCase()}`)
   editor.value = editorState[activeTab]
 }
 initPageTransitions()
