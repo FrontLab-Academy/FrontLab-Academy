@@ -1223,6 +1223,14 @@ if (editorTabs) {
 
 if (runCode) runCode.addEventListener('click', runPreview)
 
+if (editor) {
+  editor.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' || (!event.ctrlKey && !event.metaKey)) return
+    event.preventDefault()
+    runPreview()
+  })
+}
+
 if (newProject) {
   newProject.addEventListener('click', () => {
     editorState.html = '<main>\n  <h1>Novo projeto</h1>\n  <p>Comece por HTML semântico, CSS responsivo e JS limpo.</p>\n</main>'
