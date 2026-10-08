@@ -1,5 +1,5 @@
 import { tracks } from './data/trilhas.js'
-import { roadmap } from './data/roteiro.js'
+import { roadmapSections } from './data/roteiro.js'
 import { practiceItems } from './data/praticas.js'
 import { slugify } from './utils/gerar-slug.js'
 import { calculateProgressSummary, clampModuleIndex, getModuleHash, getModuleIndexFromHash, resolveModuleProgressState, setModuleCompletion } from './features/estado-modulos.js'
@@ -773,17 +773,17 @@ function renderRoadmap() {
     {
       title: 'Preparação',
       description: 'Ambiente, internet, terminal, GitHub e deploy para começar com base profissional.',
-      steps: roadmap.slice(0, 8)
+      steps: roadmapSections.preparacao
     },
     {
       title: 'HTML e Semântica',
       description: 'Estrutura, conteúdo, formulários, SEO e acessibilidade antes de pensar em aparência.',
-      steps: roadmap.slice(8, 18)
+      steps: roadmapSections.html
     },
     {
       title: 'CSS e Layout',
       description: 'Cascata, box model, tipografia, Flexbox, Grid, responsividade e motion.',
-      steps: roadmap.slice(18, 31)
+      steps: roadmapSections.css
     },
     {
       title: 'Bootstrap e UI rápida',
@@ -794,32 +794,32 @@ function renderRoadmap() {
     {
       title: 'JavaScript e DOM',
       description: 'Lógica, arrays, objetos, eventos, DOM, APIs e persistência local.',
-      steps: roadmap.slice(31, 45)
+      steps: roadmapSections.javascript
     },
     {
       title: 'TypeScript',
       description: 'Tipos, interfaces, union types, generics, eventos e contratos de API.',
-      steps: roadmap.slice(45, 57)
+      steps: roadmapSections.typescript
     },
     {
       title: 'Frameworks Front-End',
       description: 'Componentes, rotas, estado, formulários, APIs, renderização e arquitetura escalável.',
-      steps: roadmap.slice(57, 70)
+      steps: roadmapSections.frameworks
     },
     {
       title: 'Ferramentas de Entrega',
       description: 'Git, PR, npm, Vite, lint, formatação, pipeline local e release.',
-      steps: roadmap.slice(70, 80)
+      steps: roadmapSections.ferramentas
     },
     {
       title: 'Qualidade e Boas Práticas',
       description: 'Acessibilidade, performance, testes, PWA e manutenção.',
-      steps: roadmap.slice(80, 89)
+      steps: roadmapSections.qualidade
     },
     {
       title: 'Projeto Final e Portfólio',
       description: 'Planejamento, arquitetura, implementação, validação, otimização, documentação e deploy.',
-      steps: roadmap.slice(89)
+      steps: roadmapSections.projetoFinal
     }
   ]
 
