@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /pratica.html
+Disallow: /modulos.html
+
+Sitemap: https://frontlabacademy.vercel.app/sitemap.xml
