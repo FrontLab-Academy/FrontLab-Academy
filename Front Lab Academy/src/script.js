@@ -544,17 +544,25 @@ function renderPracticeCard(item, type) {
 }
 
 function renderPracticeLists() {
-  if (exerciseList) {
-    exerciseList.innerHTML = practiceItems.exercicio.map((item) => renderPracticeCard(item, 'exercicio')).join('')
-  }
-
-  if (challengeList) {
-    challengeList.innerHTML = practiceItems.desafio.map((item) => renderPracticeCard(item, 'desafio')).join('')
-  }
-
-  if (projectList) {
-    projectList.innerHTML = practiceItems.projeto.map((item) => renderPracticeCard(item, 'projeto')).join('')
-  }
+  const lists = [[exerciseList, 'exercicio'], [challengeList, 'desafio'], [projectList, 'projeto']]
+  lists.forEach(([list, type]) => {
+    if (!list) return
+    const search = document.createElement('input')
+    search.type = 'search'
+    search.className = 'search-input mb-3'
+    search.placeholder = 'Buscar por título ou tag'
+    search.setAttribute('aria-label', `Buscar ${type}s`)
+    list.before(search)
+    const render = () => {
+      const query = search.value.trim().toLowerCase()
+      const items = practiceItems[type].filter((item) => `${item.title} ${item.tags.join(' ')}`.toLowerCase().includes(query))
+      list.innerHTML = items.length
+        ? items.map((item) => renderPracticeCard(item, type)).join('')
+        : '<p class="content-card" role="status">Nenhuma prática encontrada. Limpe a busca para ver todos os itens.</p>'
+    }
+    search.addEventListener('input', render)
+    render()
+  })
 }
 
 function renderPracticeDetail() {
