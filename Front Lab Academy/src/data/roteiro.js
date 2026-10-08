@@ -108,3 +108,15 @@ export const roadmap = [
   { title: '99. Projeto final: deploy e revisão final', trail: 'preparacao-do-aluno', mod: 3 },
   { title: '100. Pronto para portfólio e entrevista', trail: 'qualidade-e-boas-praticas', mod: 6 }
 ]
+
+export const roadmapSections = {
+  preparacao: roadmap.slice(0, 8),
+  html: roadmap.slice(8, 18),
+  css: roadmap.slice(18, 31),
+  javascript: roadmap.slice(31, 45),
+  typescript: roadmap.slice(45, 57),
+  frameworks: roadmap.slice(57, 70),
+  ferramentas: roadmap.slice(70, 80),
+  qualidade: roadmap.slice(80, 89),
+  projetoFinal: roadmap.slice(89)
+}
