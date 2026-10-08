@@ -3,6 +3,7 @@ import { roadmap } from './data/roteiro.js'
 import { practiceItems } from './data/praticas.js'
 import { slugify } from './utils/gerar-slug.js'
 import { calculateProgressSummary, clampModuleIndex, getModuleHash, getModuleIndexFromHash, resolveModuleProgressState, setModuleCompletion } from './features/estado-modulos.js'
+import { renderProgressBar } from './ui/renderizadores.js'
 import './styles/style.css'
 
 const editorState = {
@@ -453,14 +454,6 @@ function updateModuleCompletion(trackSlug, index, isComplete) {
 function getTrackProgressSummary(track) {
   const states = track.modules.map((_, index) => getModuleProgressState(track.slug, index))
   return calculateProgressSummary(states)
-}
-
-function renderProgressBar(percent) {
-  return `
-    <div class="progress-shell course-progress-shell" role="progressbar" aria-label="Progresso da trilha" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}">
-      <div class="progress-fill" style="width:${percent}%"></div>
-    </div>
-  `
 }
 
 function renderTrackProgressPanel(track) {
