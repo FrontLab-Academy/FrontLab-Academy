@@ -244,8 +244,22 @@ async function initDiscordCommunityCards() {
     return
   }
 
+  cards.forEach((card) => {
+    card.setAttribute('aria-busy', 'true')
+    const online = card.querySelector('[data-discord-online]')
+    const message = card.querySelector('[data-discord-message]')
+    if (online) online.textContent = '…'
+    if (message) {
+      message.textContent = 'Carregando informações da comunidade…'
+      message.hidden = false
+    }
+  })
+
+  const controller = new AbortController()
+  const timeout = window.setTimeout(() => controller.abort(), 5000)
+
   try {
-    const response = await fetch(discordWidgetEndpoint)
+    const response = await fetch(discordWidgetEndpoint, { signal: controller.signal })
     if (!response.ok) throw new Error('Discord widget unavailable')
 
     const data = await response.json()
@@ -264,6 +278,7 @@ async function initDiscordCommunityCards() {
       if (channels) channels.innerHTML = renderDiscordChannels(data.channels || [])
       if (members) members.innerHTML = renderDiscordMembers(data.members || [])
       if (message) message.hidden = true
+      card.removeAttribute('aria-busy')
     })
   } catch (_error) {
     updateDiscordInviteLinks(discordFallbackInvite)
@@ -278,8 +293,14 @@ async function initDiscordCommunityCards() {
       if (online) online.textContent = '--'
       if (channels) channels.innerHTML = renderDiscordChannels()
       if (members) members.innerHTML = '<span class="discord-muted">Entre para acompanhar a comunidade por dentro.</span>'
-      if (message) message.hidden = false
+      if (message) {
+        message.textContent = 'Não foi possível carregar a presença ao vivo. O convite continua disponível.'
+        message.hidden = false
+      }
+      card.removeAttribute('aria-busy')
     })
+  } finally {
+    window.clearTimeout(timeout)
   }
 }
 
