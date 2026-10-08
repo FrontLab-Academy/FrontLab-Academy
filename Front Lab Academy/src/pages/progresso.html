@@ -105,6 +105,12 @@
             para a próxima etapa de cada trilha.
           </p>
         </div>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <button id="exportProgress" class="pill" type="button">Exportar progresso</button>
+          <label class="pill" for="importProgress">Importar progresso</label>
+          <input id="importProgress" type="file" accept="application/json" hidden />
+          <span id="progressTransferStatus" role="status" aria-live="polite"></span>
+        </div>
         <div id="progressDashboard" class="progress-dashboard"></div>
       </section>
     </main>

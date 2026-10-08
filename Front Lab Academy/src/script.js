@@ -41,6 +41,9 @@ const moduleMenuToggle = document.getElementById('moduleMenuToggle')
 const moduleContent = document.getElementById('moduleContent')
 const finalChallengeBox = document.getElementById('finalChallengeBox')
 const progressDashboard = document.getElementById('progressDashboard')
+const exportProgress = document.getElementById('exportProgress')
+const importProgress = document.getElementById('importProgress')
+const progressTransferStatus = document.getElementById('progressTransferStatus')
 const exerciseList = document.getElementById('exerciseList')
 const challengeList = document.getElementById('challengeList')
 const projectList = document.getElementById('projectList')
@@ -388,6 +391,37 @@ function readTrackProgress(trackSlug) {
 function saveTrackProgress(trackSlug, progress) {
   return writeStorageJson(getTrackProgressKey(trackSlug), progress)
 }
+
+function getProgressBackup() {
+  return Object.fromEntries(tracks.map((track) => [track.slug, readTrackProgress(track.slug)]))
+}
+
+if (exportProgress) exportProgress.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify({ version: 1, progress: getProgressBackup() }, null, 2)], { type: 'application/json' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = 'frontlab-progresso.json'
+  link.click()
+  URL.revokeObjectURL(link.href)
+  if (progressTransferStatus) progressTransferStatus.textContent = 'Backup exportado.'
+})
+
+if (importProgress) importProgress.addEventListener('change', async () => {
+  try {
+    const backup = JSON.parse(await importProgress.files?.[0]?.text())
+    if (backup?.version !== 1 || !backup.progress || typeof backup.progress !== 'object') throw new Error('invalid')
+    if (!window.confirm('Substituir o progresso local pelo conteúdo deste arquivo?')) return
+    tracks.forEach((track) => {
+      if (backup.progress[track.slug]) saveTrackProgress(track.slug, backup.progress[track.slug])
+    })
+    if (progressTransferStatus) progressTransferStatus.textContent = 'Progresso importado com sucesso.'
+    renderProgressPage()
+  } catch {
+    if (progressTransferStatus) progressTransferStatus.textContent = 'Arquivo de progresso inválido; nenhum dado foi alterado.'
+  } finally {
+    importProgress.value = ''
+  }
+})
 
 function getModuleProgress(trackSlug, index) {
   const progress = readTrackProgress(trackSlug)
