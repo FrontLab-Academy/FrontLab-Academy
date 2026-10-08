@@ -423,7 +423,7 @@ function getTrackProgressSummary(track) {
 
 function renderProgressBar(percent) {
   return `
-    <div class="progress-shell course-progress-shell" aria-hidden="true">
+    <div class="progress-shell course-progress-shell" role="progressbar" aria-label="Progresso da trilha" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}">
       <div class="progress-fill" style="width:${percent}%"></div>
     </div>
   `
@@ -712,7 +712,7 @@ function renderTracks() {
           </div>
           <p class="track-meta"><strong>${track.modules.length}</strong> módulos<br>Nível: ${escapeHtml(track.levelLabel)}</p>
           ${available
-            ? '<p class="track-open">Ver trilha <span aria-hidden="true">→</span></p><div class="track-progress"><div class="mb-2 track-focus">' + (progress.completed ? `${progress.completed}/${progress.total} concluídos` : 'Prática aplicada') + `</div><div class="progress-shell"><div class="progress-fill" style="width:${progress.percent}%"></div></div></div>`
+            ? '<p class="track-open">Ver trilha <span aria-hidden="true">→</span></p><div class="track-progress"><div class="mb-2 track-focus">' + `${progress.completed}/${progress.total} concluídos · ${progress.percent}%` + `</div><div class="progress-shell" role="progressbar" aria-label="Progresso em ${escapeHtml(track.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.percent}"><div class="progress-fill" style="width:${progress.percent}%"></div></div></div>`
             : '<p class="track-locked-label"><span aria-hidden="true">🔒</span> Em breve</p><div class="track-progress"><div class="mb-2 track-focus">Conteúdo em preparação</div><div class="progress-shell"><div class="progress-fill" style="width:0%"></div></div></div>'}
         ${available ? '</a>' : '</div>'}
       </article>
