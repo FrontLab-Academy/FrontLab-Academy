@@ -5,6 +5,7 @@ import {
   calculateProgressSummary,
   getModuleHash,
   getModuleIndexFromHash,
+  resolveModuleProgressState,
   setModuleCompletion
 } from '../src/features/estado-modulos.js'
 
@@ -33,4 +34,10 @@ test('recalcula totais, andamento e percentual', () => {
     percent: 50
   })
   assert.deepEqual(calculateProgressSummary([]), { total: 0, completed: 0, started: 0, percent: 0 })
+})
+
+test('deriva os três estados de progresso', () => {
+  assert.equal(resolveModuleProgressState(null, null), 'idle')
+  assert.equal(resolveModuleProgressState(null, { html: '<main></main>' }), 'started')
+  assert.equal(resolveModuleProgressState('agora', { html: '' }), 'completed')
 })

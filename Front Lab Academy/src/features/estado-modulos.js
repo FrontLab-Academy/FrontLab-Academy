@@ -41,3 +41,9 @@ export function calculateProgressSummary(states) {
     percent: total ? Math.round((completed / total) * 100) : 0
   }
 }
+
+export function resolveModuleProgressState(completedAt, draft) {
+  if (completedAt) return 'completed'
+  if (draft && Object.values(draft).some((value) => String(value).trim())) return 'started'
+  return 'idle'
+}
