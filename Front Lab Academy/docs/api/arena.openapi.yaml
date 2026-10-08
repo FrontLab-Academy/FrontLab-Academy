@@ -1,0 +1,16 @@
+openapi: 3.1.0
+info: { title: FrontLab Arena API, version: 0.1.0 }
+paths:
+  /v1/arena/challenges:
+    get:
+      summary: Listar desafios publicados
+      responses: { '200': { description: Catálogo de desafios } }
+  /v1/arena/challenges/{challengeId}/attempts:
+    post:
+      summary: Registrar tentativa autenticada
+      parameters: [{ in: path, name: challengeId, required: true, schema: { type: string, format: uuid } }]
+      responses: { '201': { description: Tentativa avaliada }, '400': { description: Envio inválido }, '401': { description: Não autenticado }, '429': { description: Limite excedido } }
+  /v1/arena/ranking:
+    get:
+      summary: Consultar ranking público sem dados pessoais
+      responses: { '200': { description: Ranking paginado } }
