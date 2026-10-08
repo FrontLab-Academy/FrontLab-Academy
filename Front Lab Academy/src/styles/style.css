@@ -3000,3 +3000,23 @@ pre {
     font-size: clamp(4.8rem, 28vw, 7.5rem);
   }
 }
+@import "tailwindcss";
+
+@theme {
+  --font-inter: Inter, ui-sans-serif, system-ui;
+  --color-bgMain: #060816;
+  --color-bgSecondary: #0b1023;
+  --color-card: #10172d;
+  --color-cardHover: #161f3b;
+  --color-borderEdge: #1d294d;
+  --color-textMain: #ffffff;
+  --color-textSecondary: #aab3d1;
+  --color-textMuted: #6e7aa5;
+  --color-purple: #7b5cff;
+  --color-purpleHover: #947bff;
+  --color-blue: #3b82f6;
+  --color-cyan: #22d3ee;
+  --color-green: #22c55e;
+  --color-yellow: #facc15;
+  --color-red: #ef4444;
+}
