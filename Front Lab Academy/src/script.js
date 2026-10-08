@@ -688,7 +688,7 @@ function renderTracks() {
 
   if (!filtered.length) {
     trackList.innerHTML = `
-      <div class="tracks-empty">
+      <div class="tracks-empty" role="status" aria-live="polite">
         <span aria-hidden="true">⌕</span>
         <h3>Nenhuma trilha encontrada</h3>
         <p>Tente outro termo ou remova os filtros para ver todo o catálogo.</p>
