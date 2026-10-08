@@ -2,7 +2,7 @@ import { tracks } from './data/trilhas.js'
 import { roadmap } from './data/roteiro.js'
 import { practiceItems } from './data/praticas.js'
 import { slugify } from './utils/gerar-slug.js'
-import { calculateProgressSummary, clampModuleIndex, getModuleHash, getModuleIndexFromHash, setModuleCompletion } from './features/estado-modulos.js'
+import { calculateProgressSummary, clampModuleIndex, getModuleHash, getModuleIndexFromHash, resolveModuleProgressState, setModuleCompletion } from './features/estado-modulos.js'
 import './styles/style.css'
 
 const editorState = {
@@ -405,7 +405,10 @@ function isModuleComplete(trackSlug, index) {
 }
 
 function getModuleProgressState(trackSlug, index) {
-  return isModuleComplete(trackSlug, index) ? 'completed' : 'idle'
+  return resolveModuleProgressState(
+    getModuleProgress(trackSlug, index).completedAt,
+    readModuleDraft(trackSlug, index)
+  )
 }
 
 function updateModuleCompletion(trackSlug, index, isComplete) {
