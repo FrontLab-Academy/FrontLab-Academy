@@ -331,6 +331,19 @@ pre {
   transition: color .2s ease;
 }
 
+#mainNav {
+  gap: clamp(0.75rem, 1.4vw, 1.5rem) !important;
+}
+
+#mainNav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-inline: 0.15rem;
+  font-size: clamp(0.78rem, 0.9vw, 0.9rem);
+  white-space: nowrap;
+}
+
 #mainNav a:hover,
 #mainNav a.nav-active {
   color: var(--text-main) !important;
